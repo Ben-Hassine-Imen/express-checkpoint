@@ -4,24 +4,19 @@ const port=4000
 
 app.set('view engine', 'ejs');
 
-const logtime=(req,res,next)=>{
-   const datetime= new Date()
-    if((datetime.getDay()>6))
-   {
-      res.send('<h1>the website not available</h1>')
-      console.log("the website not available")
+
+app.use((req, res, next) => {
+   let date = new Date();
+   let Day = date.getDay() + 1;
+   let Hour = date.getHours();
+   if (Day > 0 && Day < 6 && Hour >= 9 && Hour <= 17) next();
+   else {
+     res.send(
+       '<h3 style="font-size:xx-large; text-align: center;">This website is not available on Saturday and Sunday</h3>'
+     );
+     res.end();
    }
-   else if (datetime.getHours()<09 || datetime.getHours()>=17){
-       res.send('<h1>the website not available</h1>') 
-      console.log("the website not available") 
-   }
-   else{ 
-      console.log('available')
-   }
-     
-   next()
-}
-app.use(logtime)
+ });
 app.get('/',(req,res)=>{
    res.render('index');
 })
@@ -34,4 +29,11 @@ app.get('/contact',(req,res)=>{
    res.render('services');
 })
 
-app.listen(port,()=>{console.log('server is running')})
+app.listen(port,(err)=>{
+   if (err) {
+       return err
+   } 
+   else {
+       console.log('server is running...')
+   }
+   })
